@@ -1,8 +1,10 @@
 from flask import Flask, url_for
 
-from users import *
+import users
 
 app = Flask(__name__)
+
+app.register_blueprint(users.bp)
 
 
 @app.route('/')
@@ -21,15 +23,13 @@ def has_no_empty_params(rule):
 def site_map():
     links = []
     for rule in app.url_map.iter_rules():
-        url = url_for(rule.endpoint, **(rule.defaults or {}))
-        print(url)
-        links.append(url)
+        if has_no_empty_params(rule):
+            try:
+                url = url_for(rule.endpoint, **(rule.defaults or {}))
+                links.append(str(url))
 
-    return 200
+            except TypeError:
+                print("Couldn't get url for %s", str(rule.endpoint))
+                return 'Error', 500
 
-
-if __name__ == '__main__':
-    from . import users
-    app.register_blueprint(users.bp)
-
-    app.run()
+    return '\n'.join(links), 200

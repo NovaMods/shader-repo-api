@@ -3,6 +3,11 @@ import psycopg2
 import psycopg2.extensions
 
 
+# debugging hack
+os.environ['DB_USER'] = 'NovaShaderRepo'
+os.environ['DB_PASS'] = 'PhysicallyBasedServers12'
+
+
 def connect_to_database():
     db_user = os.environ['DB_USER']
     db_pass = os.environ['DB_PASS']

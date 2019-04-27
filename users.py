@@ -2,6 +2,7 @@
 """
 
 from datetime import date
+import json
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
@@ -21,7 +22,7 @@ VALUES (%(email)s, %(username)s, %(password_hash)s, %(skype_name)s, %(twitter_ha
 bp = Blueprint('users', __name__, url_prefix='/users')
 
 
-@bp.route('/new', methods=['POST'])
+@bp.route('', methods=['POST'])
 def add_user():
     """Add a new user to the database
     """
@@ -30,10 +31,10 @@ def add_user():
 
     new_user = dict()
 
-    data = request.data
+    data = json.loads(request.data)
     new_user['email'] = data['email']
     new_user['username'] = data['username']
-    new_user['password_hashed'] = generate_password_hash(data['password'])
+    new_user['password_hash'] = generate_password_hash(data['password'])
     new_user['join_date'] = date.today()
 
     optional_fields = ['skype_name', 'twitter_handle', 'discord_name', 'mojang_name', 'minecraftforum_name',
