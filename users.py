@@ -2,6 +2,7 @@
 """
 
 from datetime import date
+import functools
 import json
 
 from flask import (
@@ -30,10 +31,42 @@ SELECT * FROM users WHERE email=%(email)s
 bp = Blueprint('users', __name__, url_prefix='/users')
 
 
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if g.user is None:
+            return redirect(url_for('auth.login'))
+
+        return view(**kwargs)
+
+    return wrapped_view
+
+
+@bp.before_app_request
+def load_logged_in_user():
+    user_id = session.get('user_id')
+
+    if user_id is None:
+        g.user = None
+    else:
+        with util.connection:
+            with util.connection.cursor() as cursor:
+                cursor.execute('SELECT * FROM users WHERE email=%(email)s', {'email': user_id})
+                g.user = cursor.fetchone()
+
+
 @bp.route('', methods=['POST'])
 def add_user():
     """Add a new user to the database
+
+    A user must be provided in JSON in the body of a POST request. Email, username, and password are required. You may
+    provide social media usernames, like Skype or Discord or Twitter, but those may be safely omitted
+
+    This function checks that the email, username, and password are all present. It then checks that no existing users
+    are using the username or email that you want to user. Assuming all checks pass, a new user is created - with the
+    hashed password stored in the DB
     """
+
     if request.headers['content-type'] != 'application/json':
         return 'Must send a JSON request', 400
 
@@ -89,12 +122,12 @@ def login():
         with util.connection.cursor() as cursor:
             cursor.execute(find_user_by_email_statement, {'email': email})
             if cursor.rowcount == 0:
-                return f'Could not find user with email {email}', 400
+                return 'Incorrect username or password', 400
 
             user = cursor.fetchone()
 
             if not check_password_hash(user['password'], password):
-                return 'Incorrect password', 400
+                return 'Incorrect username or password', 400
 
             session.clear()
             session['user_id'] = email
