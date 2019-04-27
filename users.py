@@ -18,8 +18,10 @@ VALUES (%(email)s, %(username)s, %(password_hash)s, %(skype_name)s, %(twitter_ha
         %(discord_name)s, %(mojang_name)s, %(minecraftforum_name)s, %(website)s, %(join_date)s)
 """
 
+bp = Blueprint('users', __name__, url_prefix='/users')
 
-@app.route('/user', methods=['POST'])
+
+@bp.route('/new', methods=['POST'])
 def add_user():
     """Add a new user to the database
     """

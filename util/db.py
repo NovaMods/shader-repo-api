@@ -9,7 +9,7 @@ def connect_to_database():
 
     available_port = 5432
 
-    conn = psycopg2.connect('postgresql://{db_user}:{db_pass}@localhost:{available_port}/shaderrepo')
+    conn = psycopg2.connect(f'postgresql://{db_user}:{db_pass}@localhost:{available_port}/shaderrepo')
 
     return conn
 
