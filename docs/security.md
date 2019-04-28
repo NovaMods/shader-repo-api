@@ -26,4 +26,7 @@ make a decision on which shaderpack is the copy, or if a shaderpack was flagged 
 ### Caveats
 
 This system makes a massive assumption that the first person to upload a shaderpack is the owner of that code. This will
-almost certainly not always be true. I think 
+almost certainly not always be true. I think there are two potential solutions to this problem. The first is to mark a
+newer shaderpack as original, and the second is to disable this system entirely. It's possible that there will be so
+many flagged shaderpacks, and so many false positives, that the work of sorting them out is too much to handle. I'll 
+handle this as it happens
