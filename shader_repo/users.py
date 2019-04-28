@@ -6,12 +6,11 @@ import functools
 import json
 
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, g, redirect, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-import util
-
+from shader_repo import util
 
 insert_user_statement = """
 INSERT INTO users (email, username, password_hashed, skype_name, twitter_handle, discord_name, mojang_name, 
@@ -35,7 +34,7 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('users.login'))
 
         return view(**kwargs)
 

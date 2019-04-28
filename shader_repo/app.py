@@ -1,6 +1,6 @@
 from flask import Flask, url_for
 
-import users
+from shader_repo import users
 
 app = Flask(__name__)
 
